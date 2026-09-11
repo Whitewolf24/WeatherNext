@@ -21,7 +21,8 @@ return [
 
     'allowed_origins' => [
         'http://localhost:3000',
-        'https://weathernext.marinoscv.website'
+        'https://weathernext.marinoscv.website',
+        'https://weathernext-fx9n.onrender.com'
     ],
 
     'allowed_origins_patterns' => [],
