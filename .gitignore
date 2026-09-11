@@ -1,0 +1,88 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+/vendor
+
+/bootstrap/cache/*
+/storage/*.key
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+
+.eslintcache
+.phpunit.result.cache
+/public/build
+/public/hot
+/public/storage
+
+/storage/logs/*
+
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+next-env.d.ts
+
+
+next_frontend/node_modules
+
+next_frontend/.next/
+
+next_frontend/.env*.local
+
+next_frontend/out/
+
+next_frontend/.vercel
+
+next_frontend/npm-debug.log*
+next_frontend/yarn-debug.log*
+next_frontend/yarn-error.log*
+next_frontend/pnpm-debug.log*
+
+next_frontend/.vscode/
+next_frontend/.idea/
+next_frontend/*.suo
+next_frontend/*.ntvs*
+next_frontend/*.njsproj
+next_frontend/*.sln
+next_frontend/*.sw?

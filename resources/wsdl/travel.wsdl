@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  travel.wsdl
+
+  WSDL = "Web Services Description Language". This is the CONTRACT a SOAP
+  service publishes describing: what operations exist, what data types they
+  use, and where to send requests. A real third-party partner (airline, GDS,
+  payment gateway) gives you a WSDL like this one — you don't write theirs,
+  you only read it and build a SoapClient against it (see client.php).
+
+  This file has 5 main sections, in order: types, message, portType,
+  binding, service. Each is commented below.
+-->
+<definitions name="TravelPartnerService"
+    targetNamespace="urn:TravelPartnerWsdl"
+    xmlns:tns="urn:TravelPartnerWsdl"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <!-- 1) TYPES: custom data structures used by the service, defined using
+         standard XML Schema (XSD). Here we define one struct, BookingDetails,
+         with 4 fields — this is the "complex type" getBookingDetails returns. -->
+    <types>
+        <xsd:schema targetNamespace="urn:TravelPartnerWsdl">
+            <xsd:complexType name="BookingDetails">
+                <xsd:all>
+                    <xsd:element name="bookingId" type="xsd:string"/>
+                    <xsd:element name="passengerName" type="xsd:string"/>
+                    <xsd:element name="flightNumber" type="xsd:string"/>
+                    <xsd:element name="status" type="xsd:string"/>
+                </xsd:all>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+
+    <!-- 2) MESSAGES: the "shape" of each request and response — basically the
+         parameter list going in, and the return type coming out, for every
+         operation. Each operation below needs one input message and one
+         output message. -->
+
+    <!-- getBookingStatus: takes a bookingId string, returns a status string -->
+    <message name="getBookingStatusRequest">
+        <part name="bookingId" type="xsd:string"/>
+    </message>
+    <message name="getBookingStatusResponse">
+        <part name="status" type="xsd:string"/>
+    </message>
+
+    <!-- checkAvailability: takes 3 strings, returns an int -->
+    <message name="checkAvailabilityRequest">
+        <part name="origin" type="xsd:string"/>
+        <part name="destination" type="xsd:string"/>
+        <part name="date" type="xsd:string"/>
+    </message>
+    <message name="checkAvailabilityResponse">
+        <part name="seatsAvailable" type="xsd:int"/>
+    </message>
+
+    <!-- getBookingDetails: takes a bookingId string, returns the BookingDetails
+         struct defined up in <types> above -->
+    <message name="getBookingDetailsRequest">
+        <part name="bookingId" type="xsd:string"/>
+    </message>
+    <message name="getBookingDetailsResponse">
+        <part name="details" type="tns:BookingDetails"/>
+    </message>
+
+    <!-- 3) PORT TYPE: the actual list of operations (like an interface in
+         code) — each operation just points at the input/output messages
+         defined above. This is what SoapClient reads to know which methods
+         it can offer you, e.g. $client->getBookingStatus(...). -->
+    <portType name="TravelPartnerPortType">
+        <operation name="getBookingStatus">
+            <input message="tns:getBookingStatusRequest"/>
+            <output message="tns:getBookingStatusResponse"/>
+        </operation>
+        <operation name="checkAvailability">
+            <input message="tns:checkAvailabilityRequest"/>
+            <output message="tns:checkAvailabilityResponse"/>
+        </operation>
+        <operation name="getBookingDetails">
+            <input message="tns:getBookingDetailsRequest"/>
+            <output message="tns:getBookingDetailsResponse"/>
+        </operation>
+    </portType>
+
+    <!-- 4) BINDING: how the abstract operations above get sent over the wire —
+         which transport (HTTP), which SOAP style (rpc), and how values get
+         encoded into XML. You rarely need to touch this by hand; it's mostly
+         boilerplate that mirrors the portType section above. -->
+    <binding name="TravelPartnerBinding" type="tns:TravelPartnerPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="getBookingStatus">
+            <soap:operation soapAction="urn:TravelPartnerWsdl#getBookingStatus"/>
+            <input><soap:body use="encoded" namespace="urn:TravelPartnerWsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+            <output><soap:body use="encoded" namespace="urn:TravelPartnerWsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+        </operation>
+        <operation name="checkAvailability">
+            <soap:operation soapAction="urn:TravelPartnerWsdl#checkAvailability"/>
+            <input><soap:body use="encoded" namespace="urn:TravelPartnerWsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+            <output><soap:body use="encoded" namespace="urn:TravelPartnerWsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+        </operation>
+        <operation name="getBookingDetails">
+            <soap:operation soapAction="urn:TravelPartnerWsdl#getBookingDetails"/>
+            <input><soap:body use="encoded" namespace="urn:TravelPartnerWsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+            <output><soap:body use="encoded" namespace="urn:TravelPartnerWsdl" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+        </operation>
+    </binding>
+
+    <!-- 5) SERVICE: the actual URL where requests get sent. This is the one
+         line client.php's 'location' option overrides, to point at a
+         different environment (e.g. sandbox vs production) without editing
+         this file. -->
+    <service name="TravelPartnerService">
+        <port name="TravelPartnerPort" binding="tns:TravelPartnerBinding">
+            <soap:address location="http://localhost:8090/server.php"/>
+        </port>
+    </service>
+</definitions>
