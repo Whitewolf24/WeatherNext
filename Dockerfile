@@ -1,17 +1,18 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+FROM php:8.2-cli
 
-# Αντιγραφή όλου του κώδικα στο container
-COPY . /var/www/html
+RUN apt-get update && apt-get install -y \
+    git unzip libsqlite3-dev libzip-dev \
+    && docker-php-ext-install pdo pdo_sqlite zip
 
-# Ρύθμιση του Webroot στον φάκελο public του Laravel
-ENV WEBROOT /var/www/html/public
-ENV APP_ENV production
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Εγκατάσταση των dependencies του Composer
+WORKDIR /var/www/html
+COPY . .
+
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Δικαιώματα φακέλων για το Laravel
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Η πόρτα που θα ακούει το Render
 EXPOSE 80
+
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-80}
